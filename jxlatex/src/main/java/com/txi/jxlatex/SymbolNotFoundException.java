@@ -46,6 +46,8 @@
 
 package com.txi.jxlatex;
 
+import com.txi.jxlatex.resource.TeXSymbolParser;
+
 /**
  * Signals that an unknown symbol was used.
  *

@@ -46,7 +46,7 @@
 
 /* Modified by Calixte Denizet */
 
-package com.txi.jxlatex;
+package com.txi.jxlatex.resource;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -58,8 +58,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 
+
+import com.txi.jxlatex.CharFont;
+import com.txi.jxlatex.DefaultTeXFont;
+import com.txi.jxlatex.FontAlreadyLoadedException;
+import com.txi.jxlatex.FontInfo;
+import com.txi.jxlatex.ResourceParseException;
+import com.txi.jxlatex.SymbolAtom;
+import com.txi.jxlatex.TeXFormula;
+import com.txi.jxlatex.XMLResourceParseException;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -70,7 +78,7 @@ import org.w3c.dom.NodeList;
 /**
  * Parses the font information from an XML-file.
  */
-public class DefaultTeXFontParser {
+public class DefaultTeXFontParser extends AbstractRootParser {
 
     /**
      * if the register font cannot be found, we display an error message
@@ -78,7 +86,7 @@ public class DefaultTeXFontParser {
      */
     private static boolean registerFontExceptionDisplayed = false;
     private static boolean shouldRegisterFonts = true;
-    private static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
     private static interface CharChildParser { // NOPMD
         public void parse(Element el, char ch, FontInfo info) throws XMLResourceParseException;
     }
@@ -168,9 +176,9 @@ public class DefaultTeXFontParser {
     private static Map<String,Integer> rangeTypeMappings = new HashMap<String,Integer>();
     private static Map<String,CharChildParser> charChildParsers = new HashMap<String,CharChildParser>();
 
-    private Map<String,CharFont[]> parsedTextStyles;
+    private Map<String, CharFont[]> parsedTextStyles;
 
-    private Element root;
+
     private Object base = null;
 
     static {
@@ -181,28 +189,17 @@ public class DefaultTeXFontParser {
     }
 
     public DefaultTeXFontParser() throws ResourceParseException {
-        this(DefaultTeXFontParser.class.getResourceAsStream(RESOURCE_NAME), RESOURCE_NAME);
+        super ( RESOURCE_NAME);
     }
 
-    public DefaultTeXFontParser(InputStream file, String name) throws ResourceParseException {
-        factory.setIgnoringElementContentWhitespace(true);
-        factory.setIgnoringComments(true);
-        try {
-            root = factory.newDocumentBuilder().parse(file).getDocumentElement();
-        } catch (Exception e) { // JDOMException or IOException
-            throw new XMLResourceParseException(name, e);
-        }
+    public DefaultTeXFontParser( String resourceName) throws ResourceParseException {
+        super (resourceName);
     }
 
-    public DefaultTeXFontParser(Object base, InputStream file, String name) throws ResourceParseException {
+    public DefaultTeXFontParser(Object base, InputStream file, String resourceName) throws ResourceParseException {
+        super (resourceName);
         this.base = base;
-        factory.setIgnoringElementContentWhitespace(true);
-        factory.setIgnoringComments(true);
-        try {
-            root = factory.newDocumentBuilder().parse(file).getDocumentElement();
-        } catch (Exception e) { // JDOMException or IOException
-            throw new XMLResourceParseException(name, e);
-        }
+
     }
 
     private static void setCharChildParsers() {
@@ -217,19 +214,17 @@ public class DefaultTeXFontParser {
             return fi;
         }
         ArrayList<FontInfo> res = new ArrayList<FontInfo>(Arrays.asList(fi));
-        Element font;
-        try {
-            font = factory.newDocumentBuilder().parse(file).getDocumentElement();
-        } catch (Exception e) {
-            throw new XMLResourceParseException("Cannot find the file " + name + "!" + e.toString());
-        }
+        Element font =  XmlResourceHandler.getInstance().parse(name);
+
 
         String fontName = getAttrValueAndCheckIfNotNull("name", font);
         // get required integer attribute
         String fontId = getAttrValueAndCheckIfNotNull("id", font);
-        if (Font_ID.indexOf(fontId) < 0)
+        if (Font_ID.indexOf(fontId) < 0) {
             Font_ID.add(fontId);
-        else throw new FontAlreadyLoadedException("Font " + fontId + " is already loaded !");
+        } else {
+            throw new FontAlreadyLoadedException("Font " + fontId + " is already loaded !");
+        }
         // get required real attributes
         float space = getFloatAndCheck("space", font);
         float xHeight = getFloatAndCheck("xHeight", font);
@@ -309,23 +304,22 @@ public class DefaultTeXFontParser {
         return fi;
     }
 
-    protected void parseExtraPath() throws ResourceParseException {
+    public void parseExtraPath() throws ResourceParseException {
         Element syms = (Element)root.getElementsByTagName("TeXSymbols").item(0);
         if (syms != null) { // element present
             // get required string attribute
             String include = getAttrValueAndCheckIfNotNull("include", syms);
-            SymbolAtom.addSymbolAtom(base.getClass().getResourceAsStream(include), include);
+            SymbolAtom.addSymbolAtom(include);
         }
         Element settings = (Element)root.getElementsByTagName("FormulaSettings").item(0);
         if (settings != null) { // element present
             // get required string attribute
             String include = getAttrValueAndCheckIfNotNull("include", settings);
-            TeXFormula.addSymbolMappings(base.getClass().getResourceAsStream(include), include);
+            TeXFormula.addSymbolMappings(include);
         }
     }
 
-    private static void processCharElement(Element charElement, FontInfo info)
-    throws ResourceParseException {
+    private static void processCharElement(Element charElement, FontInfo info) throws ResourceParseException {
         // retrieve required integer attribute
         char ch = (char) getIntAndCheck("code", charElement);
         // retrieve optional float attributes
@@ -412,16 +406,8 @@ public class DefaultTeXFontParser {
             NodeList list = symbolMappings.getElementsByTagName("Mapping");
             for (int i = 0; i < list.getLength(); i++) {
                 String include = getAttrValueAndCheckIfNotNull("include", (Element)list.item(i));
-                Element map;
-                try {
-                    if (base == null) {
-                        map = factory.newDocumentBuilder().parse(DefaultTeXFontParser.class.getResourceAsStream(include)).getDocumentElement();
-                    } else {
-                        map = factory.newDocumentBuilder().parse(base.getClass().getResourceAsStream(include)).getDocumentElement();
-                    }
-                } catch (Exception e) {
-                    throw new XMLResourceParseException("Cannot find the file " + include + "!");
-                }
+                Element map = XmlResourceHandler.getInstance().parse(include);
+
                 NodeList listM = map.getElementsByTagName(SYMBOL_MAPPING_EL);
                 for (int j = 0; j < listM.getLength(); j++) {
                     Element mapping = (Element)listM.item(j);

@@ -46,6 +46,8 @@
 
 package com.txi.jxlatex;
 
+import com.txi.jxlatex.resource.TeXFormulaSettingsParser;
+
 /**
  * Signals a missing character-to-delimiter mapping.
  *

@@ -44,38 +44,35 @@
  *
  */
 
-package com.txi.jxlatex;
+package com.txi.jxlatex.resource;
 
 import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.txi.jxlatex.ResourceParseException;
+import com.txi.jxlatex.XMLResourceParseException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * Parses predefined TeXFormula's from an XML-file.
  */
 public class TeXFormulaSettingsParser {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TeXFormulaSettingsParser.class);
     public static final String RESOURCE_NAME = "TeXFormulaSettings.xml";
     public static final String CHARTODEL_MAPPING_EL = "Map";
 
-    private Element root;
+    private final Element root;
 
-    public TeXFormulaSettingsParser() throws ResourceParseException {
-        this(GlueSettingsParser.class.getResourceAsStream(RESOURCE_NAME), RESOURCE_NAME);
+    public TeXFormulaSettingsParser()   {
+        this(RESOURCE_NAME);
     }
 
-    public TeXFormulaSettingsParser(InputStream file, String name) throws ResourceParseException {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setIgnoringElementContentWhitespace(true);
-            factory.setIgnoringComments(true);
-            root = factory.newDocumentBuilder().parse(file).getDocumentElement();
-        } catch (Exception e) { // JDOMException or IOException
-            throw new XMLResourceParseException(name, e);
-        }
+    public TeXFormulaSettingsParser(String resourceName)  {
+        this.root = XmlResourceHandler.getInstance().parse(resourceName);
     }
 
     public void parseSymbolToFormulaMappings(String[] mappings, String[] textMappings) throws ResourceParseException {

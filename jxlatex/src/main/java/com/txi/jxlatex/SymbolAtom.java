@@ -48,6 +48,8 @@
 
 package com.txi.jxlatex;
 
+import com.txi.jxlatex.resource.TeXSymbolParser;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -127,18 +129,10 @@ public class SymbolAtom extends CharSymbol {
         return unicode;
     }
 
-    public static void addSymbolAtom(String file) {
-        FileInputStream in;
-        try {
-            in = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            throw new ResourceParseException(file, e);
-        }
-        addSymbolAtom(in, file);
-    }
 
-    public static void addSymbolAtom(InputStream in, String name) {
-        TeXSymbolParser tsp = new TeXSymbolParser(in, name);
+
+    public static void addSymbolAtom(String name) {
+        TeXSymbolParser tsp = new TeXSymbolParser(name);
         symbols.putAll(tsp.readSymbols());
     }
 

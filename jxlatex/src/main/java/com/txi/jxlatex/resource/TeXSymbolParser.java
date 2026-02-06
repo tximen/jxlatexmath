@@ -44,7 +44,7 @@
  *
  */
 
-package com.txi.jxlatex;
+package com.txi.jxlatex.resource;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -52,6 +52,10 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.txi.jxlatex.ResourceParseException;
+import com.txi.jxlatex.SymbolAtom;
+import com.txi.jxlatex.TeXConstants;
+import com.txi.jxlatex.XMLResourceParseException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -67,24 +71,16 @@ public class TeXSymbolParser {
 
     private Element root;
 
-    public TeXSymbolParser() throws ResourceParseException {
-        this(TeXSymbolParser.class.getResourceAsStream(RESOURCE_NAME), RESOURCE_NAME);
+    public TeXSymbolParser()   {
+        this(RESOURCE_NAME);
     }
 
-    public TeXSymbolParser(InputStream file, String name) throws ResourceParseException {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setIgnoringElementContentWhitespace(true);
-            factory.setIgnoringComments(true);
-            root = factory.newDocumentBuilder().parse(file).getDocumentElement();
-            // set possible valid symbol type mappings
-            setTypeMappings();
-        } catch (Exception e) { // JDOMException or IOException
-            throw new XMLResourceParseException(name, e);
-        }
+    public TeXSymbolParser(String resourceName)   {
+        this.root = XmlResourceHandler.getInstance().parse(resourceName);
+
     }
 
-    public Map<String,SymbolAtom> readSymbols() throws ResourceParseException {
+    public Map<String, SymbolAtom> readSymbols() throws ResourceParseException {
         Map<String,SymbolAtom> res = new HashMap<String,SymbolAtom>();
         // iterate all "symbol"-elements
         NodeList list = root.getElementsByTagName("Symbol");

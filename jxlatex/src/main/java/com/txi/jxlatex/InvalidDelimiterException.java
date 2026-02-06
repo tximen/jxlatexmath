@@ -46,6 +46,8 @@
 
 package com.txi.jxlatex;
 
+import com.txi.jxlatex.resource.TeXSymbolParser;
+
 /**
  * Signals that a symbol, that was not defined as a delimiter, was used
  * as a delimiter.

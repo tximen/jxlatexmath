@@ -46,6 +46,8 @@
 
 package com.txi.jxlatex;
 
+import com.txi.jxlatex.resource.TeXSymbolParser;
+
 /**
  * An atom representing another atom with an accent symbol above it.
  */

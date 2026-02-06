@@ -48,6 +48,9 @@
 
 package com.txi.jxlatex;
 
+import com.txi.jxlatex.resource.DefaultTeXFontParser;
+import com.txi.jxlatex.resource.TeXFormulaSettingsParser;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
@@ -56,8 +59,6 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -138,13 +139,14 @@ public class TeXFormula {
         parser.parseSymbolToFormulaMappings(symbolFormulaMappings, symbolTextMappings);
 
         try {
-            DefaultTeXFont.registerAlphabet((AlphabetRegistration) Class.forName("org.scilab.forge.jlatexmath.cyrillic.CyrillicRegistration").newInstance());
-            DefaultTeXFont.registerAlphabet((AlphabetRegistration) Class.forName("org.scilab.forge.jlatexmath.greek.GreekRegistration").newInstance());
+            DefaultTeXFont.registerAlphabet((AlphabetRegistration) Class.forName("com.txi.jxlatex.cyrillic.CyrillicRegistration").newInstance());
+            DefaultTeXFont.registerAlphabet((AlphabetRegistration) Class.forName("com.txi.jxlatex.greek.GreekRegistration").newInstance());
         } catch (Exception e) { }
 
         //setDefaultDPI();
     }
 
+    /**
     public static void addSymbolMappings(String file) throws ResourceParseException {
         FileInputStream in;
         try {
@@ -154,9 +156,11 @@ public class TeXFormula {
         }
         addSymbolMappings(in, file);
     }
+*/
 
-    public static void addSymbolMappings(InputStream in, String name) throws ResourceParseException {
-        TeXFormulaSettingsParser tfsp = new TeXFormulaSettingsParser(in, name);
+
+    public static void addSymbolMappings(  String name)   {
+        TeXFormulaSettingsParser tfsp = new TeXFormulaSettingsParser(name);
         tfsp.parseSymbolMappings(symbolMappings, symbolTextMappings);
         tfsp.parseSymbolToFormulaMappings(symbolFormulaMappings, symbolTextMappings);
     }

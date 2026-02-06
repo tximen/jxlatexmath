@@ -13,6 +13,19 @@
       <jdk.version>25</jdk.version>
   </properties>
 
+
+  <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>6.1.0-M1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
   <build>
      <plugins>
         <plugin>
@@ -24,10 +37,30 @@
               <target>${jdk.version}</target>
            </configuration>
         </plugin>
-       
+         <plugin>
+             <artifactId>maven-surefire-plugin</artifactId>
+             <version>3.5.4</version>
+         </plugin>
      </plugins>
   </build>
+
   <dependencies>
-    <!-- slf4j -->
-    </dependencies>
+
+      <dependency>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+          <version>1.5.27</version>
+      </dependency>
+      <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter</artifactId>
+          <scope>test</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.assertj</groupId>
+          <artifactId>assertj-core</artifactId>
+          <version>4.0.0-M1</version>
+          <scope>test</scope>
+      </dependency>
+  </dependencies>
 </project>

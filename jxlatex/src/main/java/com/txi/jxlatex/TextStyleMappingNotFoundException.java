@@ -46,6 +46,8 @@
 
 package com.txi.jxlatex;
 
+import com.txi.jxlatex.resource.DefaultTeXFontParser;
+
 /**
  * Signals a missing text style mapping.
  *
