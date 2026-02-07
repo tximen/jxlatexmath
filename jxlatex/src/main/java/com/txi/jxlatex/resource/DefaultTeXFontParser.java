@@ -68,6 +68,8 @@ import com.txi.jxlatex.ResourceParseException;
 import com.txi.jxlatex.SymbolAtom;
 import com.txi.jxlatex.TeXFormula;
 import com.txi.jxlatex.XMLResourceParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -80,6 +82,7 @@ import org.w3c.dom.NodeList;
  */
 public class DefaultTeXFontParser extends AbstractRootParser {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTeXFontParser.class);
     /**
      * if the register font cannot be found, we display an error message
      * but we do it only once
@@ -500,10 +503,10 @@ public class DefaultTeXFontParser extends AbstractRootParser {
         Map <String,Number>res = new HashMap<String,Number>();
         // TODO: must this be 'Number' ?
         Element generalSettings = (Element)root.getElementsByTagName("GeneralSettings").item(0);
-        if (generalSettings == null)
+        if (generalSettings == null) {
             // "GeneralSettings" is required!
             throw new XMLResourceParseException(RESOURCE_NAME, "GeneralSettings");
-        else { // element present
+        } else { // element present
             // set required int values (if valid)
             res.put(MUFONTID_ATTR, Font_ID.indexOf(getAttrValueAndCheckIfNotNull(MUFONTID_ATTR, generalSettings))); // autoboxing
             res.put(SPACEFONTID_ATTR, Font_ID.indexOf(getAttrValueAndCheckIfNotNull(SPACEFONTID_ATTR, generalSettings))); // autoboxing
@@ -571,12 +574,12 @@ public class DefaultTeXFontParser extends AbstractRootParser {
         rangeTypeMappings.put("unicode", DefaultTeXFont.UNICODE); // autoboxing
     }
 
-    private static String getAttrValueAndCheckIfNotNull(String attrName,
-            Element element) throws ResourceParseException {
+    private static String getAttrValueAndCheckIfNotNull(String attrName, Element element)  {
         String attrValue = element.getAttribute(attrName);
-        if (attrValue.equals(""))
-            throw new XMLResourceParseException(RESOURCE_NAME, element.getTagName(),
-                                                attrName, null);
+        LOGGER.info("attribute {} -> {}", attrName, attrValue);
+        if (attrValue.equals("")) {
+            throw new XMLResourceParseException(RESOURCE_NAME, element.getTagName(), attrName, null);
+        }
         return attrValue;
     }
 

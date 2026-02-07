@@ -47,6 +47,9 @@
 package com.txi.jxlatex;
 
 import com.txi.jxlatex.resource.DefaultTeXFontParser;
+import com.txi.jxlatex.resource.XmlResourceHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.Font;
 import java.io.FileInputStream;
@@ -62,6 +65,8 @@ import java.util.Map;
  * from an xml-file.
  */
 public class DefaultTeXFont implements TeXFont {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTeXFont.class);
 
     private static String[] defaultTextStyleMappings;
 
@@ -121,12 +126,14 @@ public class DefaultTeXFont implements TeXFont {
 
         // check if mufontid exists
         int muFontId = generalSettings.get(DefaultTeXFontParser.MUFONTID_ATTR).intValue();
-        if (muFontId < 0 || muFontId >= fontInfo.length || fontInfo[muFontId] == null)
+        if (muFontId < 0 || muFontId >= fontInfo.length || fontInfo[muFontId] == null) {
+            LOGGER.error("invalid muFoundId: {}", muFontId);
             throw new XMLResourceParseException(
-                DefaultTeXFontParser.RESOURCE_NAME,
-                DefaultTeXFontParser.GEN_SET_EL,
-                DefaultTeXFontParser.MUFONTID_ATTR,
-                "contains an unknown font id!");
+                    DefaultTeXFontParser.RESOURCE_NAME,
+                    DefaultTeXFontParser.GEN_SET_EL,
+                    DefaultTeXFontParser.MUFONTID_ATTR,
+                    "contains an unknown font id!");
+        }
     }
 
     private final float size; // standard size
