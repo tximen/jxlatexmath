@@ -58,7 +58,7 @@ public class XmlResourceHandler {
             resource = XmlResourceHandler.class.getResource(alternative);
         }
         if (resource == null) {
-            throw new IllegalStateException("no such resource %s".formatted(resourceName));
+            throw new NoSuchResourceException("no such resource %s".formatted(resourceName));
         } else {
             return resource;
         }

@@ -156,8 +156,8 @@ public class DefaultTeXFont implements TeXFont {
         symbolMappings.putAll(dtfp.parseSymbolMappings());
     }
 
-    public static void addTeXFontDescription(Object base, InputStream in, String name) throws ResourceParseException {
-        DefaultTeXFontParser dtfp = new DefaultTeXFontParser(base, in, name);
+    public static void addTeXFontDescription(Object base, String name) throws ResourceParseException {
+        DefaultTeXFontParser dtfp = new DefaultTeXFontParser(base, name);
         fontInfo = dtfp.parseFontDescriptions(fontInfo);
         dtfp.parseExtraPath();
         textStyleMappings.putAll(dtfp.parseTextStyleMappings());
@@ -180,7 +180,7 @@ public class DefaultTeXFont implements TeXFont {
         }
         if (!b) {
             TeXParser.isLoading = true;
-            addTeXFontDescription(base, base.getClass().getResourceAsStream(language), language);
+            addTeXFontDescription(base,   language);
             for (int i = 0; i < alphabet.length; i++) {
                 loadedAlphabets.add(alphabet[i]);
             }
@@ -188,7 +188,7 @@ public class DefaultTeXFont implements TeXFont {
         }
     }
 
-    public static void addAlphabet(Character.UnicodeBlock alphabet, InputStream inlanguage, String language, InputStream insymbols, String symbols, InputStream inmappings, String mappings) throws ResourceParseException {
+    public static void addAlphabet(Character.UnicodeBlock alphabet,   String language, InputStream insymbols, String symbols, InputStream inmappings, String mappings) throws ResourceParseException {
         if (!loadedAlphabets.contains(alphabet)) {
             addTeXFontDescription(language);
             SymbolAtom.addSymbolAtom( symbols);

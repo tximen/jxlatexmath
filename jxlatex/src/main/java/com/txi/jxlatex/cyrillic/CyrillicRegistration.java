@@ -61,6 +61,6 @@ public class CyrillicRegistration implements AlphabetRegistration {
     }
 
     public String getTeXFontFileName() {
-        return "fonts/language_cyrillic.xml";
+        return "fonts/cyrillic/language_cyrillic.xml";
     }
 }

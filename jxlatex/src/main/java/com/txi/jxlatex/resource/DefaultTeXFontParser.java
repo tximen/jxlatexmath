@@ -188,18 +188,18 @@ public class DefaultTeXFontParser extends AbstractRootParser {
         setCharChildParsers();
     }
 
-    public DefaultTeXFontParser() throws ResourceParseException {
-        super ( RESOURCE_NAME);
+    public DefaultTeXFontParser()  {
+        this (null, RESOURCE_NAME);
     }
 
-    public DefaultTeXFontParser( String resourceName) throws ResourceParseException {
-        super (resourceName);
+    public DefaultTeXFontParser( String resourceName)  {
+        this (null,resourceName);
     }
 
-    public DefaultTeXFontParser(Object base, InputStream file, String resourceName) throws ResourceParseException {
+    public DefaultTeXFontParser(Object base,  String resourceName)  {
         super (resourceName);
         this.base = base;
-
+        parsedTextStyles = parseStyleMappings();
     }
 
     private static void setCharChildParsers() {
@@ -434,10 +434,9 @@ public class DefaultTeXFontParser extends AbstractRootParser {
         }
     }
 
-    public String[] parseDefaultTextStyleMappings()
-    throws ResourceParseException {
+    public String[] parseDefaultTextStyleMappings() {
         String[] res = new String[4];
-        Element defaultTextStyleMappings = (Element)root
+        Element defaultTextStyleMappings = (Element) root
                                            .getElementsByTagName("DefaultTextStyleMapping").item(0);
         if (defaultTextStyleMappings == null)
             return res;
@@ -476,6 +475,8 @@ public class DefaultTeXFontParser extends AbstractRootParser {
         }
         return res;
     }
+
+
 
     public Map<String,Float> parseParameters() throws ResourceParseException {
         Map<String,Float> res = new HashMap<String,Float>();
@@ -520,7 +521,7 @@ public class DefaultTeXFontParser extends AbstractRootParser {
         return parsedTextStyles;
     }
 
-    private Map<String,CharFont[]> parseStyleMappings() throws ResourceParseException {
+    private Map<String,CharFont[]> parseStyleMappings()   {
         Map<String,CharFont[]> res = new HashMap<String,CharFont[]>();
         Element textStyleMappings = (Element)root.getElementsByTagName("TextStyleMappings").item(0);
         if (textStyleMappings == null)

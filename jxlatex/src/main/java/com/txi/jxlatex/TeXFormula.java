@@ -48,6 +48,8 @@
 
 package com.txi.jxlatex;
 
+import com.txi.jxlatex.cyrillic.CyrillicRegistration;
+import com.txi.jxlatex.greek.GreekRegistration;
 import com.txi.jxlatex.resource.DefaultTeXFontParser;
 import com.txi.jxlatex.resource.TeXFormulaSettingsParser;
 
@@ -136,12 +138,11 @@ public class TeXFormula {
         new PredefinedTeXFormulas();
         new PredefMacros();
 
+
         parser.parseSymbolToFormulaMappings(symbolFormulaMappings, symbolTextMappings);
 
-        try {
-            DefaultTeXFont.registerAlphabet((AlphabetRegistration) Class.forName("com.txi.jxlatex.cyrillic.CyrillicRegistration").newInstance());
-            DefaultTeXFont.registerAlphabet((AlphabetRegistration) Class.forName("com.txi.jxlatex.greek.GreekRegistration").newInstance());
-        } catch (Exception e) { }
+        DefaultTeXFont.registerAlphabet(new CyrillicRegistration());
+        //DefaultTeXFont.registerAlphabet(new GreekRegistration());
 
         //setDefaultDPI();
     }
